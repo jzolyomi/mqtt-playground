@@ -4,10 +4,14 @@ import { useState, useEffect } from "react";
 import mqtt from "mqtt";
 
 export default function MQTT_Connection() {
+  //MQTT Client
   const [client, setClient] = useState(null);
-  const [connectStatus, setConnectStatus] = useState("Not Connected");
+  //Simple Status message
+  const [connectStatus, setConnectStatus] = useState("Disconnected");
+  //Storage for incoming messages
   const [incomingMessage, setIncomingMessage] = useState("");
 
+  //MQTT options
   const mqttOptions = {
     clientId: "codeandgeek_" + Math.random().toString(16).substring(2, 8),
     // ws -> 8083; wss -> 8084
@@ -19,10 +23,17 @@ export default function MQTT_Connection() {
     setClient(mqtt.connect("wss://broker.emqx.io/mqtt", mqttOptions));
   }
 
+  function MQTTDisconnect() {
+    if (client) {
+      client.end(() => {
+        setConnectStatus("Disconnected");
+      });
+    }
+  }
+
   useEffect(() => {
     if (client) {
       client.on("connect", () => {
-        console.log(client);
         setConnectStatus("Connected!");
         //subscribe to a test topic to listen to incoming messages
         client.subscribe("codeandgeek/connection");
@@ -52,7 +63,29 @@ export default function MQTT_Connection() {
       </p>
       <p>Connection Status: {connectStatus}</p>
       <p>Last incoming message: {incomingMessage}</p>
-      <button onClick={MQTTConnect}>Connect To MQTT Broker</button>
+      <MQTTConnectButton
+        client={client}
+        MQTTConnect={MQTTConnect}
+        MQTTDisconnect={MQTTDisconnect}
+      />
     </div>
   );
+}
+
+//Connection button component
+function MQTTConnectButton({ client, MQTTConnect, MQTTDisconnect }) {
+  //Based on the client's connected property render the connect or disconnect button
+  if (client.connected) {
+    return (
+      <button className="btn btn-danger" onClick={MQTTDisconnect}>
+        Disconnect From MQTT Broker
+      </button>
+    );
+  } else {
+    return (
+      <button className="btn btn-primary" onClick={MQTTConnect}>
+        Connect To MQTT Broker
+      </button>
+    );
+  }
 }
