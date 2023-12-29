@@ -29,11 +29,11 @@ function MQTTConnectionPanel() {
             <label>Port:</label>
             <input type="number" className="form-control" defaultValue="8084" />
           </div>
-          <div className="col-sm-3">
+          <div className="col-sm-2">
             <label>
               <b>Disconnected</b>
             </label>
-            <button className="btn btn-primary"> Connect</button>
+            <button className="btn btn-primary form-control"> Connect</button>
           </div>
         </div>
       </div>
