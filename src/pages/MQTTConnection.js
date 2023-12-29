@@ -61,7 +61,20 @@ export default function MQTT_Connection() {
           EMQX.com | How to use MQTT in react
         </a>
       </p>
-      <p>Connection Status: {connectStatus}</p>
+      <p>You can read my blog post about how this script works here:</p>
+      <p>
+        <a
+          href="https://codeandgeek.com/mqtt-connection-in-react-with-mqtt-js"
+          target="_blank"
+          rel="noreferrer"
+        >
+          CodeAndGeek | MQTT Connection in React with MQTT.js
+        </a>
+      </p>
+      <hr />
+      <p>
+        MQTT client connection Status: <b>{connectStatus}</b>
+      </p>
       <p>Last incoming message: {incomingMessage}</p>
       <MQTTConnectButton
         client={client}
@@ -75,7 +88,7 @@ export default function MQTT_Connection() {
 //Connection button component
 function MQTTConnectButton({ client, MQTTConnect, MQTTDisconnect }) {
   //Based on the client's connected property render the connect or disconnect button
-  if (client.connected) {
+  if (client != null && client.connected) {
     return (
       <button className="btn btn-danger" onClick={MQTTDisconnect}>
         Disconnect From MQTT Broker
