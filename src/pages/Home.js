@@ -6,9 +6,9 @@ export default function Home() {
         MQTT is a lightweight publish/subscribe message transport protocol used
         by IOT applications to send data over TCP/IP.
         <br />
-        Eclipse Paho is an MQTT client library available for most of the common
-        programming languages. In this pages collect most of the common usage of
-        the script and also have some fun with MQTT IOT applications.
+        MQTT.js is a client library used in my project. In these pages I collect
+        most of the common usage of the script and also have some fun with MQTT
+        IOT applications.
       </p>
       <p>The page source code is available on my github page:</p>
       <p>
