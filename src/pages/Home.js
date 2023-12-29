@@ -25,6 +25,11 @@ export default function Home() {
         <li>
           <a href="/mqtt-connection">MQTT Connection example</a>
         </li>
+        <li>
+          <a href="/mqtt-publish-and-subscribe">
+            MQTT Publish and Subscribe example
+          </a>
+        </li>
       </ol>
     </div>
   );
