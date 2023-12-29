@@ -15,7 +15,7 @@ function MQTTConnectionPanel() {
   return (
     <div className="card">
       <div className="card-body">
-        MQTT Broker Connection
+        <b>MQTT Broker Connection</b>
         <div className="row">
           <div className="col-sm-5">
             <label>Hostname:</label>
@@ -37,6 +37,36 @@ function MQTTConnectionPanel() {
           </div>
         </div>
       </div>
+      <div className="card-footer text-muted">
+        MQTT Broker connection status: <b>Disconnected</b>
+      </div>
+    </div>
+  );
+}
+
+function MQTTPublishPanel() {
+  return (
+    <div className="card">
+      <div className="card-body">
+        <b>MQTT Broker Publish</b>
+        <div className="row">
+          <div className="col-sm-5">
+            <label>Topic:</label>
+            <input type="text" className="form-control" />
+          </div>
+          <div className="col-sm-5">
+            <label>Message:</label>
+            <input type="text" className="form-control" />
+          </div>
+          <div className="col-sm-2">
+            <label>
+              <b>Status</b>
+            </label>
+            <button className="btn btn-primary form-control">Send</button>
+          </div>
+        </div>
+      </div>
+      <div className="card-footer text-muted">log</div>
     </div>
   );
 }
@@ -45,7 +75,7 @@ function MQTTSubscribePanel() {
   return (
     <div className="card">
       <div className="card-body">
-        MQTT Broker Subscribe Panel and incoming messages
+        <b>MQTT Broker Subscribe and incoming messages</b>
         <div className="row">
           <div className="col-sm-5">
             <label>Subscribe to topic:</label>
@@ -90,33 +120,6 @@ function MQTTSubscribePanel() {
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
-  );
-}
-
-function MQTTPublishPanel() {
-  return (
-    <div className="card">
-      <div className="card-body">
-        MQTT Broker Publish Panel
-        <div className="row">
-          <div className="col-sm-5">
-            <label>Topic:</label>
-            <input type="text" className="form-control" />
-          </div>
-          <div className="col-sm-5">
-            <label>Message:</label>
-            <input type="text" className="form-control" />
-          </div>
-          <div className="col-sm-2">
-            <label>
-              <b>Status</b>
-            </label>
-            <button className="btn btn-primary form-control">Send</button>
-          </div>
-        </div>
-        <p>log</p>
       </div>
     </div>
   );
