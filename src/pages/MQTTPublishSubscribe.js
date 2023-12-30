@@ -174,8 +174,10 @@ function MQTTPublishPanel({ client }) {
 function MQTTSubscribePanel({ client }) {
   //Incoming messages
   const [incomingMessages, setIncomingMessages] = useState([]);
-
-  //Handle incoming messages
+  //Subscribed Topic List
+  const [topictoSubScribe, setTopicToSubscribe] = useState("codeandgeek/test");
+  const [topicList, setTopicList] = useState(["codeandgeek/connection"]);
+  //Handle incoming messages and unsubscribe
   useEffect(() => {
     if (client) {
       client.on("message", (topic, message) => {
@@ -191,6 +193,26 @@ function MQTTSubscribePanel({ client }) {
       });
     }
   }, [client]);
+
+  //handle Subscription to topics
+  function SubScribetoTopic(topic) {
+    //check if we already subsribed to the topic
+    if (topicList.indexOf(topic) < 0) {
+      setTopicList((topicList) => [...topicList, topic]);
+      client.subscribe(topic);
+    }
+  }
+
+  //Handle topic Subscriptions
+  function UnSubscribeFromTopic(topic) {
+    //check if the topic we want to subscribe is exists in the topic List
+    if (topicList.indexOf(topic) >= 0) {
+      let newTopicList = topicList.filter((item) => item !== topic);
+      console.log(newTopicList);
+      setTopicList(newTopicList);
+    }
+  }
+
   return (
     <div className="card">
       <div className="card-body">
@@ -198,24 +220,30 @@ function MQTTSubscribePanel({ client }) {
         <div className="row">
           <div className="col-sm-5">
             <label>Subscribe to topic:</label>
-            <input type="text" className="form-control" />
+            <input
+              type="text"
+              className="form-control"
+              defaultValue={topictoSubScribe}
+              onChange={(e) => setTopicToSubscribe(e.target.value)}
+            />
           </div>
           <div className="col-sm-3">
             <label>
               <b>Status</b>
             </label>
-            <button className="btn btn-primary form-control">Subscribe</button>
+            <button
+              className="btn btn-primary form-control"
+              onClick={() => SubScribetoTopic(topictoSubScribe)}
+            >
+              Subscribe
+            </button>
           </div>
         </div>
         Subscribed topics:
-        <div className="row">
-          <div className="col-sm-5">
-            <input type="text" className="form-control" disabled />
-          </div>
-          <div className="col-sm-3">
-            <button className="btn btn-danger form-control">UnSubscribe</button>
-          </div>
-        </div>
+        <SubscribedTopicRows
+          topicList={topicList}
+          UnSubscribeFromTopic={UnSubscribeFromTopic}
+        />
         <hr />
         Incoming messages:
         <button
@@ -249,4 +277,30 @@ function MQTTSubscribePanel({ client }) {
       </div>
     </div>
   );
+}
+
+function SubscribedTopicRows({ topicList, UnSubscribeFromTopic }) {
+  return topicList.map(function (topic, index) {
+    let key = "topic_" + index;
+    return (
+      <div className="row" style={{ paddingTop: "5px" }} key={key}>
+        <div className="col-sm-5">
+          <input
+            type="text"
+            className="form-control"
+            defaultValue={topic}
+            disabled
+          />
+        </div>
+        <div className="col-sm-3">
+          <button
+            className="btn btn-danger form-control"
+            onClick={() => UnSubscribeFromTopic(topic)}
+          >
+            UnSubscribe
+          </button>
+        </div>
+      </div>
+    );
+  });
 }
