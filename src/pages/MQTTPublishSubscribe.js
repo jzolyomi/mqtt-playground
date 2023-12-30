@@ -9,6 +9,8 @@ export default function MQTTPublishSubscribe() {
   //Hostname and port
   const [hostname, setHostname] = useState("wss://broker.emqx.io/mqtt");
   const [port, setPort] = useState(8084);
+  //Incoming messages
+  const [incomingMessages, setIncomingMessages] = useState([]);
 
   //MQTT options
   const mqttOptions = {
@@ -34,11 +36,23 @@ export default function MQTTPublishSubscribe() {
     if (client) {
       client.on("connect", () => {
         setConnectStatus("Connected!");
+        //subscribe to a test topic to listen to incoming messages
+        client.subscribe("codeandgeek/connection");
+        //send a test message to the same topic
+        client.publish("codeandgeek/connection", "Hello World");
       });
 
       client.on("message", (topic, message) => {
         let datenow = new Date().toLocaleTimeString();
-        //setIncomingMessage(datenow + ":[" + topic + "] " + message.toString());
+        setIncomingMessages((incomingMessages) => [
+          ...incomingMessages,
+          {
+            date: datenow,
+            topic: topic,
+            message: message,
+          },
+        ]);
+        console.log(incomingMessages);
       });
     }
   }, [client]);
@@ -57,7 +71,10 @@ export default function MQTTPublishSubscribe() {
       <br />
       <MQTTPublishPanel />
       <br />
-      <MQTTSubscribePanel />
+      <MQTTSubscribePanel
+        incomingMessages={incomingMessages}
+        setIncomingMessages={setIncomingMessages}
+      />
     </div>
   );
 }
@@ -139,7 +156,7 @@ function MQTTPublishPanel() {
   );
 }
 
-function MQTTSubscribePanel() {
+function MQTTSubscribePanel({ incomingMessages, setIncomingMessages }) {
   return (
     <div className="card">
       <div className="card-body">
@@ -167,7 +184,10 @@ function MQTTSubscribePanel() {
         </div>
         <hr />
         Incoming messages:
-        <button className="btn btn-sm btn-danger">
+        <button
+          className="btn btn-sm btn-danger"
+          onClick={() => setIncomingMessages([])}
+        >
           Clear incoming messages
         </button>
         <table className="table">
@@ -180,12 +200,16 @@ function MQTTSubscribePanel() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>2023.12.29 16:40</td>
-              <td>test/topic</td>
-              <td>test message. hello world</td>
-            </tr>
+            {incomingMessages.map(function (message, index) {
+              return (
+                <tr key={index}>
+                  <th scope="row">{index + 1}</th>
+                  <td>{message.date}</td>
+                  <td>{message.topic}</td>
+                  <td>{message.message.toString()}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
