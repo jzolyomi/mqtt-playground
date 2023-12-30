@@ -52,7 +52,6 @@ export default function MQTTPublishSubscribe() {
             message: message,
           },
         ]);
-        console.log(incomingMessages);
       });
     }
   }, [client]);
@@ -69,7 +68,7 @@ export default function MQTTPublishSubscribe() {
         setPort={setPort}
       />
       <br />
-      <MQTTPublishPanel />
+      <MQTTPublishPanel client={client} />
       <br />
       <MQTTSubscribePanel
         incomingMessages={incomingMessages}
@@ -129,7 +128,26 @@ function MQTTConnectionPanel({
   );
 }
 
-function MQTTPublishPanel() {
+function MQTTPublishPanel({ client }) {
+  //Topic and message state
+  const [topic, setTopic] = useState("codeandgeek/connection");
+  const [message, setMessage] = useState("Test message");
+  //Status log at the card footer
+  const [status, setStatus] = useState("-");
+
+  //Sand message handler
+  function publishMessage(topic, message) {
+    if (client != null && client.connected) {
+      let datenow = new Date().toLocaleTimeString();
+      client.publish(topic, message);
+      setStatus(
+        datenow + ": message (" + message + ") sent to topic: " + topic,
+      );
+    } else {
+      setStatus("Error! Client is not connected!");
+    }
+  }
+
   return (
     <div className="card">
       <div className="card-body">
@@ -137,21 +155,36 @@ function MQTTPublishPanel() {
         <div className="row">
           <div className="col-sm-5">
             <label>Topic:</label>
-            <input type="text" className="form-control" />
+            <input
+              type="text"
+              className="form-control"
+              defaultValue={topic}
+              onChange={(e) => setTopic(e.target.value)}
+            />
           </div>
           <div className="col-sm-5">
             <label>Message:</label>
-            <input type="text" className="form-control" />
+            <input
+              type="text"
+              className="form-control"
+              defaultValue={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
           </div>
           <div className="col-sm-2">
             <label>
-              <b>Status</b>
+              <b>Click to Send</b>
             </label>
-            <button className="btn btn-primary form-control">Send</button>
+            <button
+              className="btn btn-primary form-control"
+              onClick={() => publishMessage(topic, message)}
+            >
+              Send
+            </button>
           </div>
         </div>
       </div>
-      <div className="card-footer text-muted">log</div>
+      <div className="card-footer text-muted">Status: {status}</div>
     </div>
   );
 }
