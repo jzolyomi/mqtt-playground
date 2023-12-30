@@ -1,8 +1,63 @@
+import mqtt from "mqtt";
+import { useState, useEffect } from "react";
+import { MQTTConnectButton } from "./MQTTConnection";
+
 export default function MQTTPublishSubscribe() {
+  //MQTT Client and Status Message
+  const [client, setClient] = useState(null);
+  const [connectStatus, setConnectStatus] = useState("Disconnected");
+  //Hostname and port
+  const [hostname, setHostname] = useState("wss://broker.emqx.io/mqtt");
+  const [port, setPort] = useState(8084);
+
+  //MQTT options
+  const mqttOptions = {
+    clientId: "codeandgeek_" + Math.random().toString(16).substring(2, 8),
+    // ws -> 8083; wss -> 8084
+    port: port,
+  };
+
+  function MQTTConnect() {
+    setConnectStatus("Connecting...");
+    setClient(mqtt.connect(hostname, mqttOptions));
+  }
+
+  function MQTTDisconnect() {
+    if (client) {
+      client.end(() => {
+        setConnectStatus("Disconnected");
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (client) {
+      client.on("connect", () => {
+        setConnectStatus("Connected!");
+        //subscribe to a test topic to listen to incoming messages
+        client.subscribe("codeandgeek/connection");
+        //send a test message to the same topic
+        client.publish("codeandgeek/connection", "Hello World");
+      });
+
+      client.on("message", (topic, message) => {
+        let datenow = new Date().toLocaleTimeString();
+        //setIncomingMessage(datenow + ":[" + topic + "] " + message.toString());
+      });
+    }
+  }, [client]);
+
   return (
     <div className="container-fluid">
       <h3>MQTT Publish and Subscribe example</h3>
-      <MQTTConnectionPanel />
+      <MQTTConnectionPanel
+        client={client}
+        connectStatus={connectStatus}
+        MQTTConnect={MQTTConnect}
+        MQTTDisconnect={MQTTDisconnect}
+        setHostname={setHostname}
+        setPort={setPort}
+      />
       <br />
       <MQTTPublishPanel />
       <br />
@@ -11,7 +66,14 @@ export default function MQTTPublishSubscribe() {
   );
 }
 
-function MQTTConnectionPanel() {
+function MQTTConnectionPanel({
+  connectStatus,
+  MQTTConnect,
+  MQTTDisconnect,
+  setHostname,
+  setPort,
+  client,
+}) {
   return (
     <div className="card">
       <div className="card-body">
@@ -23,22 +85,32 @@ function MQTTConnectionPanel() {
               type="text"
               className="form-control"
               defaultValue="wss://broker.emqx.io/mqtt"
+              onChange={(e) => setHostname(e.target.value)}
             />
           </div>
           <div className="col-sm-2">
             <label>Port:</label>
-            <input type="number" className="form-control" defaultValue="8084" />
+            <input
+              type="number"
+              className="form-control"
+              defaultValue="8084"
+              onChange={(e) => setPort(e.target.value)}
+            />
           </div>
-          <div className="col-sm-2">
+          <div className="col-sm-4">
             <label>
-              <b>Disconnected</b>
+              <b>{connectStatus}</b>
             </label>
-            <button className="btn btn-primary form-control"> Connect</button>
+            <MQTTConnectButton
+              client={client}
+              MQTTConnect={MQTTConnect}
+              MQTTDisconnect={MQTTDisconnect}
+            />
           </div>
         </div>
       </div>
       <div className="card-footer text-muted">
-        MQTT Broker connection status: <b>Disconnected</b>
+        MQTT Broker connection status: <b>{connectStatus}</b>
       </div>
     </div>
   );

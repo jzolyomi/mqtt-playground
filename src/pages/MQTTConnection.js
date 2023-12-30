@@ -86,18 +86,18 @@ export default function MQTT_Connection() {
 }
 
 //Connection button component
-function MQTTConnectButton({ client, MQTTConnect, MQTTDisconnect }) {
+export function MQTTConnectButton({ client, MQTTConnect, MQTTDisconnect }) {
   //Based on the client's connected property render the connect or disconnect button
   if (client != null && client.connected) {
     return (
       <button className="btn btn-danger" onClick={MQTTDisconnect}>
-        Disconnect From MQTT Broker
+        Disconnect From Broker
       </button>
     );
   } else {
     return (
       <button className="btn btn-primary" onClick={MQTTConnect}>
-        Connect To MQTT Broker
+        Connect To Broker
       </button>
     );
   }
