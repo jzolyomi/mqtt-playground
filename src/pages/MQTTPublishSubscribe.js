@@ -280,27 +280,25 @@ function MQTTSubscribePanel({ client }) {
 }
 
 function SubscribedTopicRows({ topicList, UnSubscribeFromTopic }) {
-  return topicList.map(function (topic, index) {
-    let key = "topic_" + index;
-    return (
-      <div className="row" style={{ paddingTop: "5px" }} key={key}>
-        <div className="col-sm-5">
-          <input
-            type="text"
-            className="form-control"
-            defaultValue={topic}
-            disabled
-          />
-        </div>
-        <div className="col-sm-3">
-          <button
-            className="btn btn-danger form-control"
-            onClick={() => UnSubscribeFromTopic(topic)}
-          >
-            UnSubscribe
-          </button>
-        </div>
+  const topicRows = topicList.map((topic) => (
+    <div key={topic} className="row" style={{ paddingTop: "5px" }}>
+      <div className="col-sm-5">
+        <input
+          type="text"
+          className="form-control"
+          defaultValue={topic}
+          disabled
+        />
       </div>
-    );
-  });
+      <div className="col-sm-3">
+        <button
+          className="btn btn-danger form-control"
+          onClick={() => UnSubscribeFromTopic(topic)}
+        >
+          UnSubscribe
+        </button>
+      </div>
+    </div>
+  ));
+  return <div>{topicRows}</div>;
 }
