@@ -9,9 +9,6 @@ export default function MQTTPublishSubscribe() {
   //Hostname and port
   const [hostname, setHostname] = useState("wss://broker.emqx.io/mqtt");
   const [port, setPort] = useState(8084);
-  //Incoming messages
-  const [incomingMessages, setIncomingMessages] = useState([]);
-
   //MQTT options
   const mqttOptions = {
     clientId: "codeandgeek_" + Math.random().toString(16).substring(2, 8),
@@ -41,18 +38,6 @@ export default function MQTTPublishSubscribe() {
         //send a test message to the same topic
         client.publish("codeandgeek/connection", "Hello World");
       });
-
-      client.on("message", (topic, message) => {
-        let datenow = new Date().toLocaleTimeString();
-        setIncomingMessages((incomingMessages) => [
-          ...incomingMessages,
-          {
-            date: datenow,
-            topic: topic,
-            message: message,
-          },
-        ]);
-      });
     }
   }, [client]);
 
@@ -70,10 +55,7 @@ export default function MQTTPublishSubscribe() {
       <br />
       <MQTTPublishPanel client={client} />
       <br />
-      <MQTTSubscribePanel
-        incomingMessages={incomingMessages}
-        setIncomingMessages={setIncomingMessages}
-      />
+      <MQTTSubscribePanel client={client} />
     </div>
   );
 }
@@ -189,7 +171,26 @@ function MQTTPublishPanel({ client }) {
   );
 }
 
-function MQTTSubscribePanel({ incomingMessages, setIncomingMessages }) {
+function MQTTSubscribePanel({ client }) {
+  //Incoming messages
+  const [incomingMessages, setIncomingMessages] = useState([]);
+
+  //Handle incoming messages
+  useEffect(() => {
+    if (client) {
+      client.on("message", (topic, message) => {
+        let datenow = new Date().toLocaleTimeString();
+        setIncomingMessages((incomingMessages) => [
+          ...incomingMessages,
+          {
+            date: datenow,
+            topic: topic,
+            message: message,
+          },
+        ]);
+      });
+    }
+  }, [client]);
   return (
     <div className="card">
       <div className="card-body">
