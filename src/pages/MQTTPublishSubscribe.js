@@ -207,6 +207,7 @@ function MQTTSubscribePanel({ client }) {
   function UnSubscribeFromTopic(topic) {
     //check if the topic we want to subscribe is exists in the topic List
     if (topicList.indexOf(topic) >= 0) {
+      client.unsubscribe(topic);
       let newTopicList = topicList.filter((item) => item !== topic);
       console.log(newTopicList);
       setTopicList(newTopicList);
