@@ -34,10 +34,6 @@ export default function MQTTPublishSubscribe() {
     if (client) {
       client.on("connect", () => {
         setConnectStatus("Connected!");
-        //subscribe to a test topic to listen to incoming messages
-        client.subscribe("codeandgeek/connection");
-        //send a test message to the same topic
-        client.publish("codeandgeek/connection", "Hello World");
       });
 
       client.on("message", (topic, message) => {
