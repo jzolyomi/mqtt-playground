@@ -55,7 +55,7 @@ export default function MQTTPublishSubscribe() {
       <br />
       <MQTTPublishPanel client={client} />
       <br />
-      <MQTTSubscribePanel client={client} />
+      <MQTTSubscribePanel client={client} connectStatus={connectStatus} />
     </div>
   );
 }
@@ -171,7 +171,7 @@ function MQTTPublishPanel({ client }) {
   );
 }
 
-function MQTTSubscribePanel({ client }) {
+function MQTTSubscribePanel({ client, connectStatus }) {
   //Incoming messages
   const [incomingMessages, setIncomingMessages] = useState([]);
   //Subscribed Topic List
@@ -235,6 +235,7 @@ function MQTTSubscribePanel({ client }) {
             <button
               className="btn btn-primary form-control"
               onClick={() => SubScribetoTopic(topictoSubScribe)}
+              disabled={connectStatus === "Disconnected"}
             >
               Subscribe
             </button>
@@ -244,6 +245,7 @@ function MQTTSubscribePanel({ client }) {
         <SubscribedTopicRows
           topicList={topicList}
           UnSubscribeFromTopic={UnSubscribeFromTopic}
+          connectStatus={connectStatus}
         />
         <hr />
         Incoming messages:
@@ -280,7 +282,11 @@ function MQTTSubscribePanel({ client }) {
   );
 }
 
-function SubscribedTopicRows({ topicList, UnSubscribeFromTopic }) {
+function SubscribedTopicRows({
+  topicList,
+  UnSubscribeFromTopic,
+  connectStatus,
+}) {
   const topicRows = topicList.map((topic) => (
     <div key={topic} className="row" style={{ paddingTop: "5px" }}>
       <div className="col-sm-5">
@@ -288,13 +294,14 @@ function SubscribedTopicRows({ topicList, UnSubscribeFromTopic }) {
           type="text"
           className="form-control"
           defaultValue={topic}
-          disabled
+          disabled={connectStatus === "Disconnected"}
         />
       </div>
       <div className="col-sm-3">
         <button
           className="btn btn-danger form-control"
           onClick={() => UnSubscribeFromTopic(topic)}
+          disabled={connectStatus === "Disconnected"}
         >
           UnSubscribe
         </button>
