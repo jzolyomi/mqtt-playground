@@ -294,7 +294,7 @@ function SubscribedTopicRows({
           type="text"
           className="form-control"
           defaultValue={topic}
-          disabled={connectStatus === "Disconnected"}
+          disabled
         />
       </div>
       <div className="col-sm-3">
